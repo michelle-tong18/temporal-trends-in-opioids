@@ -13,7 +13,7 @@ The scripts in this repository have been tested with Python 3.9.
 1. Set up a github API Key
 2. Clone the repo
 ```
-git clone git@github.com:michelle-tong18/temporal-trends-for-nsLBP-opioids.git
+git clone git@github.com:michelle-tong18/temporal-trends-in-opioids.git
 ```
 
 ## Pipeline
