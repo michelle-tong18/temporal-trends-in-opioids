@@ -7,8 +7,27 @@ class Extractor(object):
         #Set print counts flag
         self.num_results_flag = num_results_flag          #show the number of query results
         self.display_results_flag = display_results_flag  #display the query results
-        
-    def run_query(self,query_text,runtime_flag=True,df_type='pandas'):
+    
+    def register_table(self, name: str, df):
+        duckdb.register(name, df)
+        self.registered_tables[name] = df
+        if self.display_results_flag:
+            print(f"Registered table: '{name}' with {len(df)} rows")
+
+    def unregister_table(self, name: str):
+        if name in self.registered_tables:
+            duckdb.unregister(name)
+            del self.registered_tables[name]
+            if self.display_results_flag:
+                print(f"Unregistered table: '{name}'")
+        else:
+            print(f"Table '{name}' not found among registered tables.")
+    
+    def run_query(self,query_text,tables_dict,runtime_flag=True,df_type='pandas'):
+        # Register dataframes in query
+        for table_name, query_table in tables_dict.items():
+            self.register_table(table_name, query_table)
+
         start_time = time.time()
         results_df = duckdb.sql(query_text).df()
         run_time = time.time() - start_time
@@ -16,6 +35,11 @@ class Extractor(object):
             print(f"query runtime: {run_time//60:.0f}m {run_time%60:.2f}s")
         if self.num_results_flag==True:     
             print(f'total query results: ',len(results_df))
+        
+        # Unregister dataframe in the query
+        for table_name, _ in tables_dict.items():
+            self.unregister_table(table_name)
+
         return results_df
 
     def col_to_list(self, df, key_text:str, isdistinct:bool=True, n_show:str=5):
