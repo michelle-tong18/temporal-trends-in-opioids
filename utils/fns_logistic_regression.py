@@ -28,7 +28,7 @@ class LogisticModelFitter:
         interaction_pval = self._likelihood_ratio_test(full_model, reduced_model)
         
         return full_model, interaction_pval
-
+    
     def fit_stratified_model(self, df: pd.DataFrame, outcome: str, stratify_by: str, 
                            stratum_value, confounders: List[str]) -> Dict[str, dict]:
         """Fit logistic model for a specific stratum."""
@@ -46,6 +46,19 @@ class LogisticModelFitter:
         model = smf.logit(formula, data=stratum_data).fit(disp=0)
         odds_ratios = self._extract_exp_coefficients(model)
         return model, odds_ratios
+
+    def fit_multivariate_model(self, df: pd.DataFrame, outcome: str, predictors: str, 
+                  clean_confounders: List[str]) -> Tuple[Dict[str, dict], float]:
+        """Fit logistic model and extract coefficients plus interaction test."""
+        
+        # Build and fit models
+        interaction_str = ' + '.join([f'timebin * {p}' for p in predictors])
+        covariate_str = ' + '.join(clean_confounders)
+        interaction_formula = f"{outcome} ~ {interaction_str} + {covariate_str}"
+        print(f"Formula:\n{interaction_formula}\n")
+        model = smf.logit(interaction_formula, data=df).fit(disp=0)
+        
+        return model
 
     def _clean_confounders(self, confounders: List[str], predictor: str, 
                           available_cols: List[str]) -> List[str]:
@@ -436,7 +449,7 @@ class ResultsFormatter:
                 levels = sorted(df[predictor].unique())
             # Check if binary variable
             is_binary = (levels == [0.0, 1.0] or levels == [False, True])
-        
+            
             if is_binary:
                 all_rows.append({
                     'Variable': predictor,                
@@ -639,4 +652,36 @@ class LogisticAnalysisOrchestrator:
         
         print('bonf')
         return OR_results, interaction_results, corrected_pvals, formatted_OR_results, formatted_interaction_results
+    
+    def analyze_multivariate_predictors(self, df: pd.DataFrame, predictors: List[str], 
+                          confounders: List[str], outcome: str = 'opioid') -> Tuple[pd.DataFrame, pd.DataFrame]:
+        """Main function to analyze multiple predictors and return combined tables."""
+
+        print(f"\n=== Analyzing {predictors} ===")
+        
+        model  = self.model_fitter.fit_multivariate_model(
+            df, outcome, predictors, confounders
+        )
+
+        results_data = []
+        for predictor in predictors:
+            
+            interaction_terms = self.interaction_metrics.extract_interaction_terms(
+                model, predictor, df
+            )
+            
+            results_data.append({
+                'predictor': predictor,
+                'interaction_pval': None,
+                'odds_ratios': None,
+                'interaction_metrics': interaction_terms
+            })
+
+        results_df = pd.DataFrame(results_data)
+
+        # Create tables
+        OR_results, interaction_results = self.formatter.create_results_summary(results_df)
+        formatted_interaction_results = self.formatter.create_interaction_table(results_df, df)
+        
+        return interaction_results, formatted_interaction_results
     
