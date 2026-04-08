@@ -7,7 +7,8 @@ class Extractor(object):
         #Set print counts flag
         self.num_results_flag = num_results_flag          #show the number of query results
         self.display_results_flag = display_results_flag  #display the query results
-    
+        self.registered_tables = {}
+        
     def register_table(self, name: str, df):
         duckdb.register(name, df)
         self.registered_tables[name] = df
