@@ -1,4 +1,4 @@
-# temporal-trends-for-nsLBP-opioids
+# temporal-trends-in-nsLBP-opioids
 
 ## Description
 Opioid Prescription Trends for Non-Specific Lower Back Pain: Time Series and Patient-Level Modeling. Understanding how opioid prescribing patterns evolve over time and for whom is critical to building responsible clinical decision support tools and policies. This analysis models 6-month opioid prescription outcomes following first presentation for non-specific lower back pain (ns-LBP) using EHR data from 2012–2024. Change point detection and interrupted time series analysis capture population-level shifts in prescribing behavior, while multivariate logistic regression quantifies patient-level variation across demographics, social determinants, and diagnoses using comparative subgroup interaction metrics. The pipeline demonstrates practical integration of time series analysis and interpretable modeling, with emphasis on real-world clinical data, data-driven insight, and reproducible ML workflows.
