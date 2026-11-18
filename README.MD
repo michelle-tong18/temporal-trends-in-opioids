@@ -34,4 +34,5 @@ git clone git@github.com:michelle-tong18/temporal-trends-in-opioids.git
 Distributed under the MIT License. See LICENSE.txt for more information.
 
 ## Citations
-* Tong MW, et al. .doi: [TBD](TBD)
+* Tong MW, Joseph GB, Majumdar S. Trends in Opioid Prescribing for Nonspecific Low Back Pain After CDC Guidelines and California Prescription Drug Monitoring Programs, 2012-2024. Public Health Reports®. 2026;0(0). doi:[10.1177/00333549261486260](https://doi.org/10.1177/00333549261486260)
+* Tong MW, Joseph GB, Ziegeler K, Kreutzinger V, Majumdar S. Opioid Prescribing Trajectories for Nonspecific Low Back Pain: Sociodemographic and Clinical Heterogeneity Across Three Policy Periods, 2012–2024. Pain Reports. 2026; doi:[]() 
